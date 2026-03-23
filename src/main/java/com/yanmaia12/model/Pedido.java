@@ -3,6 +3,7 @@ package com.yanmaia12.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
@@ -13,6 +14,10 @@ public class Pedido {
 
     @Column(nullable = false)
     private LocalDate data;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "pedido_produto", joinColumns = @JoinColumn(name = "pedido_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
+    private List<Produto> produtos;
 
     public Pedido() {
     }
