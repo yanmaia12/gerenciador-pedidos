@@ -18,7 +18,9 @@ public class GerenciadorPedidosApplication implements CommandLineRunner{
 
     @Autowired
     CategoriaRepository categoriaRepository;
+    @Autowired
     PedidoRepository pedidoRepository;
+    @Autowired
     ProdutoRepository produtoRepository;
 
 	public static void main(String[] args) {

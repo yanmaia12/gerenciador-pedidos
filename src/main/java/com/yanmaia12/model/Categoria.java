@@ -2,6 +2,9 @@ package com.yanmaia12.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "categorias")
 public class Categoria {
@@ -11,6 +14,9 @@ public class Categoria {
 
     @Column(unique = true, nullable = false)
     private String nome;
+
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Produto> produtos = new ArrayList<>();
 
     public Categoria(){}
 
@@ -32,5 +38,14 @@ public class Categoria {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<Produto> produtos) {
+        produtos.forEach(s -> s.setCategoria(this));
+        this.produtos = produtos;
     }
 }

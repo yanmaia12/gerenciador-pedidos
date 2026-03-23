@@ -15,12 +15,24 @@ public class Produto {
     @Column(name = "valor", nullable = false)
     private Double preco;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     public Produto() {
     }
 
     public Produto(String nome, Double preco) {
         this.nome = nome;
         this.preco = preco;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     public Long getId() {
