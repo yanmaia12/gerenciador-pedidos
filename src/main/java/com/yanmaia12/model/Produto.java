@@ -29,6 +29,11 @@ public class Produto {
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
 
+    @Override
+    public String toString() {
+        return "%s - %.2f€ | " + categoria + ".";
+    }
+
     public Produto() {
     }
 
