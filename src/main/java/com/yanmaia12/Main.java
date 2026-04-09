@@ -35,10 +35,11 @@ public class Main {
                     
                     0 - para sair
                     
-                    Opção: """;
+                    Opção:  """;
             System.out.print(menu);
             opcao = scanner.nextInt();
             scanner.nextLine();
+            System.out.println();
 
             switch (opcao){
                 case 1:
@@ -66,18 +67,34 @@ public class Main {
     }
 
     public void createProduto(){
+        List<Categoria> listaCategorias = categoriaRepository.findAll();
+        if (listaCategorias.isEmpty()){
+            System.out.println("Nenhuma categoria criada, crie uma para poder criar um produto!");
+            return;
+        }
+        System.out.println("\n--- Categorias Disponíveis ---");
+        listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
+        System.out.print("\nDigite o nome da categoria para este novo produto: ");
+        String nomeCategoria = scanner.nextLine();
+        var categoria = categoriaRepository.findByNomeIgnoreCase(nomeCategoria);
+        if (categoria.isEmpty()) {
+            System.out.println("Categoria não encontrada!");
+            return;
+        }
         System.out.print("Qual o nome do produto? ");
         var nome = scanner.nextLine();
         System.out.print("Qual o preço do produto? ");
         var preco = scanner.nextDouble();
         scanner.nextLine();
-        Produto produto = new Produto(nome, preco);
+        Produto produto = new Produto(nome, preco, categoria.get());
         produtoRepository.save(produto);
         System.out.println("Novo produto '%s' salvo com sucesso!".formatted(produto.getNome()));
     }
 
     public void createCategoria(){
-        Categoria categoria = new Categoria();
+        System.out.print("Qual o nome da categoria: ");
+        var nome = scanner.nextLine();
+        Categoria categoria = new Categoria(nome);
         categoriaRepository.save(categoria);
         System.out.println("Nova categoria '%s' salvo com sucesso!".formatted(categoria.getNome()));
     }
@@ -99,13 +116,16 @@ public class Main {
     }
 
     private void buscarTodosProdutosDeUmaCategoria(){
+        List<Categoria> listaCategorias = categoriaRepository.findAll();
+        System.out.println("\n--- Categorias Disponíveis ---");
+        listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
         System.out.print("Escreva o nome da categoria dos produtos que prentede buscar: ");
         String categoria = scanner.nextLine();
         List<Produto> lisaProdutos = produtoRepository.findByCategoriaNomeIgnoreCase(categoria);
         if (lisaProdutos.isEmpty()){
             System.out.println("Nenhum produto encontrado com essa categoria!");
         }else{
-            lisaProdutos.forEach(s -> System.out.print(s.toString()));
+            lisaProdutos.forEach(s -> System.out.print("%s - %.2f€.".formatted(s.getNome(), s.getPreco())));
         }
     }
 

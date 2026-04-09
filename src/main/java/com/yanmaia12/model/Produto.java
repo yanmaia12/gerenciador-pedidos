@@ -31,15 +31,17 @@ public class Produto {
 
     @Override
     public String toString() {
-        return "%s - %.2f€ | " + categoria + ".".formatted(nome, preco);
+        String nomeCategoria = (categoria != null) ? categoria.getNome() : "Sem categoria";
+        return "%s - %.2f€ | %s.\n".formatted(nome, preco, nomeCategoria);
     }
 
     public Produto() {
     }
 
-    public Produto(String nome, Double preco) {
+    public Produto(String nome, Double preco, Categoria categoria) {
         this.nome = nome;
         this.preco = preco;
+        this.categoria = categoria;
     }
 
     public Categoria getCategoria() {
