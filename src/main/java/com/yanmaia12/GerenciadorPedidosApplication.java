@@ -32,7 +32,5 @@ public class GerenciadorPedidosApplication implements CommandLineRunner{
         Main main = new Main(categoriaRepository, pedidoRepository, produtoRepository);
 
         main.exibeMenu();
-
-
     }
 }

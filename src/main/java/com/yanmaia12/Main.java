@@ -36,6 +36,7 @@ public class Main {
                     8 - Buscar produtos de uma categoria ordenado por preço (crescente)
                     9 - Buscar produtos de uma categoria ordenado por preço (decrescente)
                     10 - Número de produtos registrados em uma categoria
+                    11 - Número de produtos a partir de um preço
                                    
                     0 - para sair
                     
@@ -75,6 +76,9 @@ public class Main {
                     break;
                 case 10:
                     contagemPorCategoria();
+                    break;
+                case 11:
+                    contagemPorPreco();
                     break;
                 case 0:
                     break;
@@ -217,11 +221,24 @@ public class Main {
         listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
         System.out.print("Escreva o nome da categoria dos produtos que prentede buscar: ");
         String categoria = scanner.nextLine();
-        int contagem = produtoRepository.countByCategoriaNomeIgnoreCase(categoria);
+        Long contagem = produtoRepository.countByCategoriaNomeIgnoreCase(categoria);
         if (contagem==0){
             System.out.println("Nenhum produto nessa categoria!");
         }else{
             System.out.println("Foram encontrados %d produtos na categoria %s!".formatted(contagem, categoria));
+        }
+    }
+
+    private void contagemPorPreco(){
+        System.out.print("Valor mínimo dos produtos: ");
+        double preco = scanner.nextDouble();
+        scanner.nextLine();
+
+        Long contagem = produtoRepository.countByPrecoGreaterThanEqual(preco);
+        if (contagem==0){
+            System.out.println("Nenhum produto igual ou superior a esse preço!");
+        }else{
+            System.out.println("Foram encontrados %d produtos a partir de %.2f€!".formatted(contagem, preco));
         }
     }
 
