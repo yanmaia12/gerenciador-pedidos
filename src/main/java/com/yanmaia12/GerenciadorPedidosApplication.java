@@ -31,12 +31,8 @@ public class GerenciadorPedidosApplication implements CommandLineRunner{
     public void run(String... args) throws Exception {
         Main main = new Main(categoriaRepository, pedidoRepository, produtoRepository);
 
-        Produto produto = new Produto("Notebook", 3500.0);
-        Categoria categoria = new Categoria("Eletrônicos");
-        Pedido pedido = new Pedido(LocalDate.now());
+        main.exibeMenu();
 
-        main.createProduto(produto);
-        main.createCategoria(categoria);
-        main.createPedido(pedido);
+
     }
 }

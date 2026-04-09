@@ -25,32 +25,59 @@ public class Main {
         var opcao = 100;
         while (opcao!=0){
             var menu = """
-                    1 - Buscar produto pelo nome
-                    2 - Buscar categoria de produtos
+                    
+                    1 - Criar Produto
+                    2 - Criar Categoria
+                    3 - Buscar produto pelo nome
+                    4 - Buscar categoria de produtos
+                    5 - Buscar produtos por um preço mínimo
+                    6 - Buscar produtos até um preço máximo
                     
                     0 - para sair
-                    """;
+                    
+                    Opção: """;
             System.out.print(menu);
             opcao = scanner.nextInt();
             scanner.nextLine();
 
             switch (opcao){
                 case 1:
-                    buscarProdutoPeloNome();
+                    createProduto();
                     break;
                 case 2:
+                    createCategoria();
+                    break;
+                case 3:
+                    buscarProdutoPeloNome();
+                    break;
+                case 4:
                     buscarTodosProdutosDeUmaCategoria();
+                    break;
+                case 5:
+                    buscarProdutoPrecoMinimo();
+                    break;
+                case 6:
+                    buscarProdutoPrecoMaximo();
+                    break;
+                case 0:
                     break;
             }
         }
     }
 
-    public void createProduto(Produto produto){
+    public void createProduto(){
+        System.out.print("Qual o nome do produto? ");
+        var nome = scanner.nextLine();
+        System.out.print("Qual o preço do produto? ");
+        var preco = scanner.nextDouble();
+        scanner.nextLine();
+        Produto produto = new Produto(nome, preco);
         produtoRepository.save(produto);
         System.out.println("Novo produto '%s' salvo com sucesso!".formatted(produto.getNome()));
     }
 
-    public void createCategoria(Categoria categoria){
+    public void createCategoria(){
+        Categoria categoria = new Categoria();
         categoriaRepository.save(categoria);
         System.out.println("Nova categoria '%s' salvo com sucesso!".formatted(categoria.getNome()));
     }
@@ -79,6 +106,30 @@ public class Main {
             System.out.println("Nenhum produto encontrado com essa categoria!");
         }else{
             lisaProdutos.forEach(s -> System.out.print(s.toString()));
+        }
+    }
+
+    private void buscarProdutoPrecoMinimo(){
+        System.out.print("Defina um preço minímo para os produtos que deseja buscar: ");
+        Double preco = scanner.nextDouble();
+        scanner.nextLine();
+        List<Produto> listaProdutos = produtoRepository.findByPrecoGreaterThanEqual(preco);
+        if (listaProdutos.isEmpty()){
+            System.out.println("Nenhum produto encontrado a partir desse valor!");
+        }else{
+            listaProdutos.forEach(s -> System.out.print(s.toString()));
+        }
+    }
+
+    private void buscarProdutoPrecoMaximo(){
+        System.out.print("Defina um preço máximo para os produtos que deseja buscar: ");
+        Double preco = scanner.nextDouble();
+        scanner.nextLine();
+        List<Produto> listaProdutos = produtoRepository.findByPrecoLessThanEqual(preco);
+        if (listaProdutos.isEmpty()){
+            System.out.println("Nenhum produto encontrado até esse valor!");
+        }else{
+            listaProdutos.forEach(s -> System.out.print(s.toString()));
         }
     }
 }

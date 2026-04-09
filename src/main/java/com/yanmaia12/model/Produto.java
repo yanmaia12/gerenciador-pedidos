@@ -31,7 +31,7 @@ public class Produto {
 
     @Override
     public String toString() {
-        return "%s - %.2f€ | " + categoria + ".";
+        return "%s - %.2f€ | " + categoria + ".".formatted(nome, preco);
     }
 
     public Produto() {
