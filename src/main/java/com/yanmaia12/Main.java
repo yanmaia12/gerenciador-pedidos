@@ -28,11 +28,15 @@ public class Main {
                     
                     1 - Criar Produto
                     2 - Criar Categoria
-                    3 - Buscar produto pelo nome
+                    3 - Buscar produto pelo nome exato
                     4 - Buscar categoria de produtos
                     5 - Buscar produtos por um preço mínimo
                     6 - Buscar produtos até um preço máximo
-                    
+                    7 - Buscar produto por nome
+                    8 - Buscar produtos de uma categoria ordenado por preço (crescente)
+                    9 - Buscar produtos de uma categoria ordenado por preço (decrescente)
+                    10 - Número de produtos registrados em uma categoria
+                                   
                     0 - para sair
                     
                     Opção:  """;
@@ -60,8 +64,22 @@ public class Main {
                 case 6:
                     buscarProdutoPrecoMaximo();
                     break;
+                case 7:
+                    buscarProdutoPorNomeParecido();
+                    break;
+                case 8:
+                    buscarPorCategoriaPrecoCresc();
+                    break;
+                case 9:
+                    buscarPorCategoriaPrecoDesc();
+                    break;
+                case 10:
+                    contagemPorCategoria();
+                    break;
                 case 0:
                     break;
+                default:
+                    System.out.println("Opcção inválida!");
             }
         }
     }
@@ -125,7 +143,7 @@ public class Main {
         if (lisaProdutos.isEmpty()){
             System.out.println("Nenhum produto encontrado com essa categoria!");
         }else{
-            lisaProdutos.forEach(s -> System.out.print("%s - %.2f€.".formatted(s.getNome(), s.getPreco())));
+            lisaProdutos.forEach(s -> System.out.println("%s - %.2f€.".formatted(s.getNome(), s.getPreco())));
         }
     }
 
@@ -152,4 +170,59 @@ public class Main {
             listaProdutos.forEach(s -> System.out.print(s.toString()));
         }
     }
+
+    private void buscarProdutoPorNomeParecido(){
+        System.out.print("Escreva o nome do produto que prentede buscar: ");
+        String produto = scanner.nextLine();
+        List<Produto> listaProdutos = produtoRepository.findByNomeContainsIgnoreCase(produto);
+        if (listaProdutos.isEmpty()){
+            System.out.println("Nenhum produto encontrado com esse nome!");
+        }else{
+            listaProdutos.forEach(s -> System.out.print(s.toString()));
+        }
+    }
+
+    private void buscarPorCategoriaPrecoCresc(){
+        List<Categoria> listaCategorias = categoriaRepository.findAll();
+        System.out.println("\n--- Categorias Disponíveis ---");
+        listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
+        System.out.print("Escreva o nome da categoria dos produtos que prentede buscar: ");
+        String categoria = scanner.nextLine();
+        List<Produto> listaProdutos = produtoRepository.findByCategoriaNomeIgnoreCaseOrderByPreco(categoria);
+        if (listaProdutos.isEmpty()){
+            System.out.println("Nenhum produto encontrado com essa categoria!");
+        }else{
+            listaProdutos.forEach(s -> System.out.println("%s - %.2f€.".formatted(s.getNome(), s.getPreco())));
+        }
+
+    }
+
+    private void buscarPorCategoriaPrecoDesc(){
+        List<Categoria> listaCategorias = categoriaRepository.findAll();
+        System.out.println("\n--- Categorias Disponíveis ---");
+        listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
+        System.out.print("Escreva o nome da categoria dos produtos que prentede buscar: ");
+        String categoria = scanner.nextLine();
+        List<Produto> listaProdutos = produtoRepository.findByCategoriaNomeIgnoreCaseOrderByPrecoDesc(categoria);
+        if (listaProdutos.isEmpty()){
+            System.out.println("Nenhum produto encontrado com essa categoria!");
+        }else{
+            listaProdutos.forEach(s -> System.out.println("%s - %.2f€.".formatted(s.getNome(), s.getPreco())));
+        }
+    }
+
+    private void contagemPorCategoria(){
+        List<Categoria> listaCategorias = categoriaRepository.findAll();
+        System.out.println("\n--- Categorias Disponíveis ---");
+        listaCategorias.forEach(c -> System.out.println("- " + c.getNome()));
+        System.out.print("Escreva o nome da categoria dos produtos que prentede buscar: ");
+        String categoria = scanner.nextLine();
+        int contagem = produtoRepository.countByCategoriaNomeIgnoreCase(categoria);
+        if (contagem==0){
+            System.out.println("Nenhum produto nessa categoria!");
+        }else{
+            System.out.println("Foram encontrados %d produtos na categoria %s!".formatted(contagem, categoria));
+        }
+    }
+
 }
