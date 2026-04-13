@@ -7,6 +7,8 @@ import com.yanmaia12.repository.CategoriaRepository;
 import com.yanmaia12.repository.PedidoRepository;
 import com.yanmaia12.repository.ProdutoRepository;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -37,6 +39,8 @@ public class Main {
                     9 - Buscar produtos de uma categoria ordenado por preço (decrescente)
                     10 - Número de produtos registrados em uma categoria
                     11 - Número de produtos a partir de um preço
+                    12 - Criar Pedido
+                    13 - Listar pedidos pós data
                                    
                     0 - para sair
                     
@@ -79,6 +83,12 @@ public class Main {
                     break;
                 case 11:
                     contagemPorPreco();
+                    break;
+                case 12:
+                    criarPedido();
+                    break;
+                case 13:
+                    listarPedidosPosData();
                     break;
                 case 0:
                     break;
@@ -242,4 +252,82 @@ public class Main {
         }
     }
 
+    private void criarPedido(){
+        System.out.print("Qual a data do pedido (yyyy-mm-dd): ");
+        String data = scanner.nextLine();
+        LocalDate dataBusca;
+
+        try{
+             dataBusca = LocalDate.parse(data);
+        }catch (Exception e){
+            System.out.println("Data inválida. Usando a data de hoje");
+             dataBusca = LocalDate.now();
+        }
+
+        System.out.print("Pedido criado, adicione produtos a lista!");
+        List<Produto> listaProdutos = produtoRepository.findAll();
+        listaProdutos.forEach(s -> System.out.println("%s - %.2f€".formatted(s.getNome(), s.getPreco())));
+        String res = "";
+        List<Produto> carrinho = new ArrayList<>();
+        while (!res.equalsIgnoreCase("n")){
+            System.out.print("Escreva o nome do produto: ");
+            String produto = scanner.nextLine();
+            Produto produtoAchado = produtoRepository.findByNomeIgnoreCase(produto);
+            if (produtoAchado != null){
+                System.out.print("Quantos unidades de %s pretende adicionar ao carrinho? ".formatted(produtoAchado.getNome()));
+                int quantidade = scanner.nextInt();
+                scanner.nextLine();
+
+                for (int i = 0; i < quantidade; i++) {
+                    carrinho.add(produtoAchado);
+                }
+                System.out.println("%s adicionado ao carrinho!".formatted(produtoAchado.getNome()));
+            }else {
+                System.out.println("Produto não encontrado!");
+            }
+
+            System.out.println("Deseja adicionar mais produtos? (s/n) ");
+            res = scanner.nextLine();
+        }
+
+        Pedido pedido = new Pedido(dataBusca, carrinho);
+        pedidoRepository.save(pedido);
+        System.out.println("Pedido criado!");
+    }
+
+    private void listarPedidosPosData(){
+        System.out.print("Qual a data do pedido (yyyy-mm-dd): ");
+        String data = scanner.nextLine();
+        LocalDate dataBusca;
+
+        try{
+            dataBusca = LocalDate.parse(data);
+        }catch (Exception e){
+            System.out.println("Data inválida. Usando a data de hoje");
+            dataBusca = LocalDate.now();
+        }
+
+        List<Pedido> listaPedidos = pedidoRepository.findByDataGreaterThanEqual(dataBusca);
+
+        if (listaPedidos.isEmpty()) {
+            System.out.println("Nenhum pedido encontrado após esta data.");
+        } else {
+            listaPedidos.forEach(p -> {
+                System.out.println("📦 PEDIDO ID: " + p.getId());
+                System.out.println("📅 DATA: " + p.getData());
+                System.out.println("🛒 ITENS DO PEDIDO:");
+
+                p.getProdutos().forEach(prod -> {
+                    System.out.print("   - " + prod.toString());
+                });
+
+                double total = p.getProdutos().stream()
+                        .mapToDouble(Produto::getPreco)
+                        .sum();
+                System.out.println("💰 TOTAL: %.2f€".formatted(total));
+            });
+            System.out.println("\n");
+        }
+
+    }
 }
