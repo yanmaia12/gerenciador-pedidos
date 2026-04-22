@@ -6,6 +6,7 @@ import com.yanmaia12.model.Produto;
 import com.yanmaia12.repository.CategoriaRepository;
 import com.yanmaia12.repository.PedidoRepository;
 import com.yanmaia12.repository.ProdutoRepository;
+import com.yanmaia12.util.TratamentoErros;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,6 +42,11 @@ public class Main {
                     11 - Número de produtos a partir de um preço
                     12 - Criar Pedido
                     13 - Listar pedidos pós data
+                    14 - Listar todos os produtos por ordem crescente de valor
+                    15 - Listar todos os produtos por ordem decrescente de valor
+                    16 - Buscar por letra inicial
+                    17 - Calcular média de preço
+                    
                                    
                     0 - para sair
                     
@@ -89,6 +95,18 @@ public class Main {
                     break;
                 case 13:
                     listarPedidosPosData();
+                    break;
+                case 14:
+                    listarProdutoOrdemCrescente();
+                    break;
+                case 15:
+                    listarProdutoOrdemDecrescente();
+                    break;
+                case 16:
+                    buscarProdutosPorLetraInicial();
+                    break;
+                case 17:
+                    calcularMediaDePreco();
                     break;
                 case 0:
                     break;
@@ -329,5 +347,25 @@ public class Main {
             System.out.println("\n");
         }
 
+    }
+
+    private void listarProdutoOrdemCrescente(){
+        List<Produto> listaProdutos = produtoRepository.listaProdutosOrdemCrescente();
+        listaProdutos.forEach(p -> System.out.println("%s - %.2f€".formatted(p.getNome(), p.getPreco())));
+    }
+
+    private void listarProdutoOrdemDecrescente(){
+        List<Produto> listaProdutos = produtoRepository.listaProdutosOrdemDescrescente();
+        listaProdutos.forEach(p -> System.out.println("%s - %.2f€".formatted(p.getNome(), p.getPreco())));
+    }
+
+    private void buscarProdutosPorLetraInicial(){
+        String letra = TratamentoErros.tratamentoString("Indique a letra inicial: ").substring(0, 1) + "%";
+        List<Produto> listaProduto = produtoRepository.buscarProdutosQueComecemPor(letra);
+        listaProduto.forEach(p -> System.out.println("%s - %.2f€".formatted(p.getNome(), p.getPreco())));
+    }
+
+    private void calcularMediaDePreco(){
+        System.out.println("A média de preço dos produtos registrados é de %.2f€".formatted(produtoRepository.mediaPreco()));
     }
 }
